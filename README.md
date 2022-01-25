@@ -14,6 +14,7 @@ Ever wnated to know what book has impacted Shane's life or Josh's life, well Can
 <!-- Provide a detailed description of the application design. What technologies (languages, libraries, etc) you're using, and any other relevant design information. -->
 
 ## Change Log
+
 Name of feature: ________________________________
 
 Estimate of time needed to complete: _____
@@ -28,9 +29,9 @@ Actual time needed to complete: _____
 <!-- See below -->
 
 ## Credit and Collaborations
+
 Josh McCluskey
 Shane Roach
-
 
 ## Logistical
 
