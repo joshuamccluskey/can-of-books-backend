@@ -13,19 +13,19 @@ mongoose.connect(process.env.DB_URL);
 //Bring in our Book Schema if we want to use the Cat models
 
 const Book = require('./model/book');
-const res = require('express/lib/response');
+
 
 // Connection Validation
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {
-  console.log('Mongoose is connected')
+  console.log('Mongoose is connected');
 });
 
 const app = express();
 app.use(cors());
 
-const PORT = process.env.PORT || 3002;
+const PORT = process.env.PORT || 3001;
 
 app.get('/test', (request, response) => {
 
