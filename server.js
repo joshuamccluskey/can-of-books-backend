@@ -37,6 +37,7 @@ app.get('/test', (request, response) => {
 
 app.get('/books', handleGetBooks);
 app.post('/books', handlePostBooks);
+app.delete('/books/:id', handleDeleteBooks);
 
 async function handleGetBooks(req, res) {
   let queryObject = {};
@@ -72,6 +73,17 @@ async function handlePostBooks(req, res) {
   } catch (err) {
     console.error(err);
     res.status(500).send('Something\'s wrong with the server!😭');
+  }
+}
+
+async function handleDeleteBooks(req, res){
+
+  let id = req.params.id;
+  try {
+    await Book.findByIdAndDelete(id);
+    res.status(204).send('cat deleted');
+  } catch(err){
+    res.status(404).send(`unable to delete ${id}`);
   }
 }
 
