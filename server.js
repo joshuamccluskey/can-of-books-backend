@@ -42,6 +42,7 @@ app.get('/', (req, res) => {
 app.get('/books', handleGetBooks);
 app.post('/books', handlePostBooks);
 app.delete('/books', handleDeleteBooks);
+app.put('/books/:id', handlePutBooks);
 
 async function handleGetBooks(req, res) {
   let queryObject = {};
@@ -89,5 +90,25 @@ async function handleDeleteBooks(req, res) {
     res.status(404).send(`Unable to delete ${id} 😟`);
   }
 }
+
+
+
+async function handlePutBooks(req, res) {
+  let id = req.params.id;
+
+  try {
+    let updatedBook = await Book.findByIdAndUpdate(id, req.body, { new: true, overwrite: true });
+    res.status(200).send(updatedBook);
+  } catch (err) {
+    res.status(404).send(`Cannot update ${id}`);
+
+  }
+
+}
+
+
+
+
+
 
 app.listen(PORT, () => console.log(`listening on ${PORT}`));
