@@ -35,6 +35,10 @@ app.get('/test', (request, response) => {
 
 });
 
+app.get('/', (req, res) => {
+ res.send('Servers Up! 🤗');
+});
+
 app.get('/books', handleGetBooks);
 app.post('/books', handlePostBooks);
 app.delete('/books/:id', handleDeleteBooks);
@@ -77,16 +81,12 @@ async function handlePostBooks(req, res) {
 }
 
 async function handleDeleteBooks(req, res){
-  // res.status('this working in delete');
-  // console.log(req.params.id);
-  // let { id } = req.params
-  // res.send('route hit');
   let id = req.params.id;
   try {
     await Book.findByIdAndDelete(id);
-    res.status(204).send('cat deleted');
+    res.status(200).send('Book deleted! 🤣');
   } catch(err){
-    res.status(404).send(`unable to delete ${id}`);
+    res.status(404).send(`Unable to delete ${id} 😟`);
   }
 }
 
