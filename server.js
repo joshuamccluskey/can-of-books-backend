@@ -77,7 +77,10 @@ async function handlePostBooks(req, res) {
 }
 
 async function handleDeleteBooks(req, res){
-
+  // res.status('this working in delete');
+  // console.log(req.params.id);
+  // let { id } = req.params
+  // res.send('route hit');
   let id = req.params.id;
   try {
     await Book.findByIdAndDelete(id);
