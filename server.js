@@ -36,12 +36,12 @@ app.get('/test', (request, response) => {
 });
 
 app.get('/', (req, res) => {
- res.send('Servers Up! 🤗');
+  res.send('Servers Up! 🤗');
 });
 
 app.get('/books', handleGetBooks);
 app.post('/books', handlePostBooks);
-app.delete('/books/:id', handleDeleteBooks);
+app.delete('/books', handleDeleteBooks);
 
 async function handleGetBooks(req, res) {
   let queryObject = {};
@@ -80,12 +80,12 @@ async function handlePostBooks(req, res) {
   }
 }
 
-async function handleDeleteBooks(req, res){
+async function handleDeleteBooks(req, res) {
   let id = req.params.id;
   try {
     await Book.findByIdAndDelete(id);
     res.status(200).send('Book deleted! 🤣');
-  } catch(err){
+  } catch (err) {
     res.status(404).send(`Unable to delete ${id} 😟`);
   }
 }
