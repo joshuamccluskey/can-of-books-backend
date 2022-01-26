@@ -15,6 +15,7 @@ mongoose.connect(process.env.DB_URL);
 const Book = require('./model/book');
 
 
+
 // Connection Validation
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
@@ -24,6 +25,7 @@ db.once('open', function () {
 
 const app = express();
 app.use(cors());
+app.use(express.json());
 
 const PORT = process.env.PORT || 3001;
 
@@ -34,6 +36,7 @@ app.get('/test', (request, response) => {
 });
 
 app.get('/books', handleGetBooks);
+app.post('/books', handlePostBooks);
 
 async function handleGetBooks(req, res) {
   let queryObject = {};
@@ -43,6 +46,7 @@ async function handleGetBooks(req, res) {
       email: req.query.email
     };
   }
+
 
 
   try {
@@ -59,5 +63,16 @@ async function handleGetBooks(req, res) {
   }
 }
 
+async function handlePostBooks(req, res) {
+  console.log(req.body);
+  try {
+    const booksWeNeed = await Book.create(req.body);
+    console.log('Hi from handle Get Posts');
+    res.status(201).send(booksWeNeed);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Something\'s wrong with the server!😭');
+  }
+}
 
 app.listen(PORT, () => console.log(`listening on ${PORT}`));
