@@ -41,7 +41,7 @@ app.get('/', (req, res) => {
 
 app.get('/books', handleGetBooks);
 app.post('/books', handlePostBooks);
-app.delete('/books', handleDeleteBooks);
+app.delete('/books/:id', handleDeleteBooks);
 app.put('/books/:id', handlePutBooks);
 
 async function handleGetBooks(req, res) {
