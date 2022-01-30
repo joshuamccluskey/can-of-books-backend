@@ -13,6 +13,7 @@ mongoose.connect(process.env.DB_URL);
 //Bring in our Book Schema if we want to use the Cat models
 
 const Book = require('./model/book');
+const verifyUser = require('./auth.js');
 
 
 
@@ -43,30 +44,45 @@ app.get('/books', handleGetBooks);
 app.post('/books', handlePostBooks);
 app.delete('/books/:id', handleDeleteBooks);
 app.put('/books/:id', handlePutBooks);
+app.get('/user', handleGetUser)
+
+// to use verification functionality, paste your existing code inside of this function:
+// verifyUser(req, async (err, user) => {
+//   if (err) {
+//     console.error(err);
+//     res.send('invalid token');
+//   } else {
+//     // insert try catch logic here.  BE CAREFUL.  check syntax IMMEDIATELY
+//   }
+// });
 
 async function handleGetBooks(req, res) {
-  let queryObject = {};
+  // let queryObject = {};
 
-  if (req.query.email) {
-    queryObject = {
-      email: req.query.email
-    };
-  }
+  // if (req.query.email) {
+  //   queryObject = {
+  //     email: req.query.email
+  //   };
+  // }
 
-
-
-  try {
-    //return all the results with empty object or get books from the same user email
-    let booksFromDb = await Book.find(queryObject);
-
-    if (booksFromDb.length > 0) {
-      res.status(200).send(booksFromDb);
+  verifyUser(req, async (err, user) => {
+    if (err) {
+      console.error(err);
+      res.send('invalid token');
     } else {
-      res.status(404).send('No books found...☹️');
+      try {
+        let booksFromDb = await Book.find({ email: user.email });
+
+        if (booksFromDb.length > 0) {
+          res.status(200).send(booksFromDb);
+        } else {
+          res.status(404).send('No books found...☹️');
+        }
+      } catch (err) {
+        res.status(500).send('Server Error...😩');
+      }
     }
-  } catch (err) {
-    res.status(500).send('Server Error...😩');
-  }
+  });
 }
 
 async function handlePostBooks(req, res) {
@@ -82,33 +98,57 @@ async function handlePostBooks(req, res) {
 }
 
 async function handleDeleteBooks(req, res) {
-  let id = req.params.id;
-  try {
-    await Book.findByIdAndDelete(id);
-    res.status(200).send('Book deleted! 🤣');
-  } catch (err) {
-    res.status(404).send(`Unable to delete ${id} 😟`);
-  }
+
+  verifyUser(req, async (err, user) => {
+    if (err) {
+      console.error(err);
+      res.send('invalid token');
+    } else {
+      let id = req.params.id;
+      try {
+        const book = await Book.findOne({ _id: id, email: user.email });
+        if (!book) {
+          res.status(400).send('unable to update book');
+        } else {
+          await Book.findByIdAndDelete(id);
+          res.status(200).send('cant delete');
+        }
+      } catch (err) {
+        res.status(404).send(`unable to delete ${id}`);
+      }
+    }
+  });
 }
+
 
 
 
 async function handlePutBooks(req, res) {
   let id = req.params.id;
-
+  let email = req.query.email;
   try {
-    let updatedBook = await Book.findByIdAndUpdate(id, req.body, { new: true, overwrite: true });
-    res.status(200).send(updatedBook);
+    const book = await Book.findOne({ _id: id, email });
+    if (!book) {
+      res.status(400).send('unable to update book');
+    } else {
+      let updatedBook = await Book.findByIdAndUpdate(id, req.body, { new: true, overwrite: true });
+      res.status(200).send(updatedBook);
+    }
   } catch (err) {
-    res.status(404).send(`Cannot update ${id}`);
-
+    res.status(404).send(`unable to delete ${id}`);
   }
-
 }
 
 
-
-
-
+function handleGetUser(req, res) {
+  verifyUser(req, (err, user) => {
+    if (err) {
+      console.log(err);
+      res.send('invalid token');
+    } else {
+      res.send(user);
+    }
+  });
+}
 
 app.listen(PORT, () => console.log(`listening on ${PORT}`));
