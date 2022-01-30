@@ -44,17 +44,8 @@ app.get('/books', handleGetBooks);
 app.post('/books', handlePostBooks);
 app.delete('/books/:id', handleDeleteBooks);
 app.put('/books/:id', handlePutBooks);
-app.get('/user', handleGetUser)
+app.get('/user', handleGetUser);
 
-// to use verification functionality, paste your existing code inside of this function:
-// verifyUser(req, async (err, user) => {
-//   if (err) {
-//     console.error(err);
-//     res.send('invalid token');
-//   } else {
-//     // insert try catch logic here.  BE CAREFUL.  check syntax IMMEDIATELY
-//   }
-// });
 
 async function handleGetBooks(req, res) {
   // let queryObject = {};

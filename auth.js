@@ -1,19 +1,18 @@
-'use struct';
+'use strict';
 
+// jwt - also pronounced "jot"
+const jwt = require('jsonwebtoken');
 
-//"jot"
-const jwt = require ('jsonwebtoken');
-
-//"ja-wicks"
+// jwks - also pronounce "ja-wicks".  is actually json web key set
 const jwksClient = require('jwks-rsa');
 
-//Auth0 account page -> advanced settings -> Endpoints -> 0auth -> JSON Web Key Set
+// the jwks uri come Auth0 account page -> advanced settings -> Endpoints -> 0auth -> JSON Web Key Set
 const client = jwksClient({
-  jwksUril: process.env.JWKS_URI
+  jwksUri: process.env.JWKS_URI
 });
 
-//Go getKey from jsonwebtoken
-//from:  https://www.npmjs.com/package/jsonwebtoken - search for "getKey"
+// I need a getKey function from jsonwebtoken to make things work
+// from:  https://www.npmjs.com/package/jsonwebtoken - search for "auth0"
 function getKey(header, callback){
   client.getSigningKey(header.kid, function(err, key) {
     var signingKey = key.publicKey || key.rsaPublicKey;
@@ -21,17 +20,16 @@ function getKey(header, callback){
   });
 }
 
-// function to verify user on route
-function verifyUser(req, errFirstOrUserCallbacKFunction){
-  try{
+// we are writing this function to verify the user on our route
+// this is how we do it!
+function verifyUser(req, errFirstOrUserCallbackFunction){
+  try {
     const token = req.headers.authorization.split(' ')[1];
-    console.log(token);
-
-    //Verify jwt verify
-    jwt.verify(token, getKey, {}, errFirstOrUserCallbacKFunction);
-
-  }catch (error){
-    errFirstOrUserCallbacKFunction('verboden not authorized');
+    //console.log(token);
+    // from the jsonwebtoken docs:
+    jwt.verify(token, getKey, {}, errFirstOrUserCallbackFunction);
+  } catch(error){
+    errFirstOrUserCallbackFunction('not authorized');
   }
 }
 
